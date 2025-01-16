@@ -1,0 +1,740 @@
+[
+    {
+        "id": "a07d466be93c703b",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "aacb2ff26034cdab",
+        "type": "ui_text",
+        "z": "a07d466be93c703b",
+        "group": "d0b0573b7944d9c4",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Numero Passeggeri",
+        "format": "{{ msg.payload }}",
+        "layout": "col-center",
+        "className": "",
+        "style": true,
+        "font": "Arial,Arial,Helvetica,sans-serif",
+        "fontSize": "20",
+        "color": "#00fcff",
+        "x": 710,
+        "y": 240,
+        "wires": []
+    },
+    {
+        "id": "0c6a455a32856295",
+        "type": "function",
+        "z": "a07d466be93c703b",
+        "name": "NumPassCheck",
+        "func": "let passengerCount = context.get('passengerCount') || 0;\n\n// Decodifica il messaggio\nconst action = msg.payload; // Rimuove spazi inutili\n\n// Aumenta o diminuisce di 1 in base all'istruzione\nif (action === \"increase\") {\n    passengerCount += 1;\n} else if (action === \"decrease\") {\n    if(passengerCount == 0){\n        msg.payload(\"Errore Passeggeri\");\n        return msg;\n    }\n    passengerCount -= 1;\n}\n\n// Memorizza il nuovo valore\ncontext.set('passengerCount', passengerCount);\n\n// Invia il conteggio aggiornato come output\nmsg.payload = passengerCount ; \nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "context.set('passengerCount', 0);\n",
+        "finalize": "",
+        "libs": [],
+        "x": 500,
+        "y": 200,
+        "wires": [
+            [
+                "aacb2ff26034cdab",
+                "1a5286ca17579701"
+            ]
+        ]
+    },
+    {
+        "id": "9a5617cfb84506fb",
+        "type": "mqtt in",
+        "z": "a07d466be93c703b",
+        "name": "",
+        "topic": "numticket",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "3ee154e92170cd72",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 300,
+        "y": 60,
+        "wires": [
+            [
+                "d19f0d8bd18e6665"
+            ]
+        ]
+    },
+    {
+        "id": "9b8e115685fd2513",
+        "type": "mqtt in",
+        "z": "a07d466be93c703b",
+        "name": "",
+        "topic": "numpass",
+        "qos": "0",
+        "datatype": "auto-detect",
+        "broker": "3ee154e92170cd72",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 240,
+        "y": 200,
+        "wires": [
+            [
+                "0c6a455a32856295",
+                "6d30b1b9951af42d"
+            ]
+        ]
+    },
+    {
+        "id": "7257c34a7bb0e674",
+        "type": "mqtt in",
+        "z": "a07d466be93c703b",
+        "name": "",
+        "topic": "posbus",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "3ee154e92170cd72",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 270,
+        "y": 500,
+        "wires": [
+            [
+                "c596422012d28a7a",
+                "d3a746ed7a8b35f6",
+                "39e71a29c42422cc"
+            ]
+        ]
+    },
+    {
+        "id": "546ae341d6cc522d",
+        "type": "ui_text",
+        "z": "a07d466be93c703b",
+        "group": "4684eb9c7015d3a2",
+        "order": 0,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Numero Ticket",
+        "format": "{{msg.payload}}",
+        "layout": "col-center",
+        "className": "",
+        "style": true,
+        "font": "Arial,Arial,Helvetica,sans-serif",
+        "fontSize": "20",
+        "color": "#00fcff",
+        "x": 960,
+        "y": 40,
+        "wires": []
+    },
+    {
+        "id": "795ccc57bb12b4c1",
+        "type": "mqtt out",
+        "z": "a07d466be93c703b",
+        "name": "StartBus",
+        "topic": "startbus",
+        "qos": "0",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "3ee154e92170cd72",
+        "x": 1160,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "2977585caca40c1b",
+        "type": "switch",
+        "z": "a07d466be93c703b",
+        "name": "Stop Countdown",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "0",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "0",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 910,
+        "y": 320,
+        "wires": [
+            [
+                "008000b0cd3e180a"
+            ],
+            [
+                "795ccc57bb12b4c1",
+                "a8e1db9a8642e478"
+            ]
+        ]
+    },
+    {
+        "id": "008000b0cd3e180a",
+        "type": "ui_text",
+        "z": "a07d466be93c703b",
+        "group": "1440358bef112737",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "Timer",
+        "format": "{{ msg.payload }}",
+        "layout": "col-center",
+        "className": "",
+        "style": true,
+        "font": "Arial,Arial,Helvetica,sans-serif",
+        "fontSize": "20",
+        "color": "#00fcff",
+        "x": 1150,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "d19f0d8bd18e6665",
+        "type": "function",
+        "z": "a07d466be93c703b",
+        "name": "IncreaseTicket",
+        "func": "let numTicket = context.get('numTicket') || 0;\n\nnumTicket += 1;\n\ncontext.set('numTicket', numTicket);\n\nmsg.payload =  numTicket;\n\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "\n\ncontext.set('numTicket', 0);",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 60,
+        "wires": [
+            [
+                "546ae341d6cc522d",
+                "f4fb53a4b7981d45"
+            ]
+        ]
+    },
+    {
+        "id": "c596422012d28a7a",
+        "type": "ui_artlessgauge2",
+        "z": "a07d466be93c703b",
+        "group": "1440358bef112737",
+        "order": 2,
+        "width": "6",
+        "height": "6",
+        "name": "",
+        "icon": "fa-bus",
+        "label": "Percentuale",
+        "unit": "%",
+        "layout": "radial",
+        "decimals": 0,
+        "differential": false,
+        "minmax": true,
+        "colorTrack": "#555555",
+        "style": "",
+        "colorFromTheme": true,
+        "property": "payload",
+        "secondary": "secondary",
+        "inline": true,
+        "animate": true,
+        "log2": false,
+        "sectors": [
+            {
+                "val": 0,
+                "col": "#ff2600",
+                "t": "min",
+                "dot": 0
+            },
+            {
+                "val": 50,
+                "col": "#e9e935",
+                "t": "sec",
+                "dot": 0
+            },
+            {
+                "val": 75,
+                "col": "#61e43c",
+                "t": "sec",
+                "dot": 0
+            },
+            {
+                "val": 100,
+                "col": "#61e43c",
+                "t": "max",
+                "dot": 0
+            }
+        ],
+        "lineWidth": "5",
+        "bgcolorFromTheme": true,
+        "diffCenter": "",
+        "x": 900,
+        "y": 500,
+        "wires": []
+    },
+    {
+        "id": "89e5b927975783a8",
+        "type": "ui_template",
+        "z": "a07d466be93c703b",
+        "group": "d0b0573b7944d9c4",
+        "name": "General Style",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "format": "<style>\n    body {\n        font-family: 'Roboto', sans-serif;\n        background-color: #f5f5f5;\n        color: #444;\n    }\n\n    .nr-dashboard-card {\n        border-radius: 15px;\n        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);\n        background: linear-gradient(145deg, #ffffff, #e6e6e6);\n        margin: 10px;\n        transition: transform 0.3s, box-shadow 0.3s;\n    }\n\n    .nr-dashboard-card:hover {\n        transform: translateY(-5px);\n        box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.25);\n    }\n\n    .nr-dashboard-theme {\n        --nr-dashboard-widget-border-radius: 10px;\n        --nr-dashboard-widget-padding: 15px;\n    }\n\n    .nr-dashboard-widget-title {\n        color: #555;\n        font-weight: bold;\n        text-transform: uppercase;\n    }\n\n    .nr-dashboard-widget-value {\n        color: #0078d7;\n        font-size: 1.5em;\n    }\n</style>",
+        "storeOutMessages": true,
+        "fwdInMessages": true,
+        "resendOnRefresh": true,
+        "templateScope": "local",
+        "className": "",
+        "x": 660,
+        "y": 880,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7c289f7f4f5a8423",
+        "type": "telegram sender",
+        "z": "a07d466be93c703b",
+        "name": "telegram_bot",
+        "bot": "9a47fea7d9d4e067",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 770,
+        "y": 600,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dd6d03a853361e09",
+        "type": "telegram receiver",
+        "z": "a07d466be93c703b",
+        "name": "",
+        "bot": "9a47fea7d9d4e067",
+        "saveDataDir": "",
+        "filterCommands": false,
+        "x": 410,
+        "y": 800,
+        "wires": [
+            [
+                "d6d1aa9ab67a32ae"
+            ],
+            [
+                "d6d1aa9ab67a32ae"
+            ]
+        ]
+    },
+    {
+        "id": "d3a746ed7a8b35f6",
+        "type": "function",
+        "z": "a07d466be93c703b",
+        "name": "posBus checker",
+        "func": "let value = msg.payload;\n\nif (msg.payload === \"100\") {\n    msg.payload = {\n        chatId: \"-1002280540877\",\n        type: \"message\",\n        content: \"Lo Smart Bus è arrivato!\"\n    };\n} else {\n    // Se msg.payload non è 100, invia il numero normale\n    msg.payload = {\n    chatId: \"-1002280540877\", \n    type: \"message\",\n    content: \"Lo SmartBus ha coperto il \" + value + \"% del percorso\"\n}\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 480,
+        "y": 600,
+        "wires": [
+            [
+                "7c289f7f4f5a8423"
+            ]
+        ]
+    },
+    {
+        "id": "3a38051e89ee8947",
+        "type": "telegram sender",
+        "z": "a07d466be93c703b",
+        "name": "",
+        "bot": "9a47fea7d9d4e067",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 1360,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a8e1db9a8642e478",
+        "type": "function",
+        "z": "a07d466be93c703b",
+        "name": "BusStarted notifier",
+        "func": "msg.payload = {\n    chatId: \"-1002280540877\", \n    type: \"message\",\n    content: \"Lo SmartBus è partito allo scadere del timer!\"\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1150,
+        "y": 380,
+        "wires": [
+            [
+                "3a38051e89ee8947"
+            ]
+        ]
+    },
+    {
+        "id": "d6d1aa9ab67a32ae",
+        "type": "function",
+        "z": "a07d466be93c703b",
+        "name": "commands handler",
+        "func": "let text = msg.payload.content;\n\nif(text.includes(\"Schiavo\")){ \n    msg.payload = {\n    chatId: \"-1002280540877\", \n    type: \"message\",\n    content: \"Zi Badrone\"\n}\n}else{\n   return;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 800,
+        "wires": [
+            [
+                "8459847389fd2e63"
+            ]
+        ]
+    },
+    {
+        "id": "8459847389fd2e63",
+        "type": "telegram sender",
+        "z": "a07d466be93c703b",
+        "name": "",
+        "bot": "9a47fea7d9d4e067",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 920,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "bd56cf929ed84349",
+        "type": "function",
+        "z": "a07d466be93c703b",
+        "name": "BusStarting notifier",
+        "func": "msg.payload = {\n    chatId: \"-1002280540877\", \n    type: \"message\",\n    content: \"Lo SmartBus sta per partire!\"\n}\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 400,
+        "wires": [
+            [
+                "3a38051e89ee8947"
+            ]
+        ]
+    },
+    {
+        "id": "d379730a4377cceb",
+        "type": "telegram sender",
+        "z": "a07d466be93c703b",
+        "name": "",
+        "bot": "9a47fea7d9d4e067",
+        "haserroroutput": false,
+        "outputs": 1,
+        "x": 940,
+        "y": 120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f4fb53a4b7981d45",
+        "type": "function",
+        "z": "a07d466be93c703b",
+        "name": "Ticket Number",
+        "func": "\nmsg.payload = {\n    chatId: \"-1002280540877\", \n    type: \"message\",\n    content: \"Un passeggero ha appena timbrato!\"\n}\n\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 120,
+        "wires": [
+            [
+                "d379730a4377cceb"
+            ]
+        ]
+    },
+    {
+        "id": "6d30b1b9951af42d",
+        "type": "switch",
+        "z": "a07d466be93c703b",
+        "name": "",
+        "property": "topic",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "numpass",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "tpartenza",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 430,
+        "y": 300,
+        "wires": [
+            [
+                "17cc1e1d0aaa8467"
+            ],
+            [
+                "2e0e5799992e9752",
+                "bd56cf929ed84349"
+            ]
+        ]
+    },
+    {
+        "id": "2e0e5799992e9752",
+        "type": "function",
+        "z": "a07d466be93c703b",
+        "name": "Timer",
+        "func": "// Ottieni il riferimento al timer e il countdown dal contesto di flusso\nlet timer = flow.get('timer') || null;\nlet countdown = flow.get('countdown') || 0;\n\n// Controlla se il payload è \"start\" e il timer non è già attivo\nif (msg.payload === \"start\" && !timer) {\n    countdown = 10; // Imposta il countdown iniziale\n    flow.set('countdown', countdown);\n\n    // Funzione per gestire il decremento del timer\n    timer = setInterval(() => {\n        countdown = flow.get('countdown') || 0;\n        countdown -= 1;\n\n        if (countdown > 0) {\n            flow.set('countdown', countdown);\n            node.send({ payload: countdown }); // Invia il valore attuale\n        } else {\n            clearInterval(timer);\n            flow.set('timer', null);\n            flow.set('countdown', 0);\n            node.send({ payload: countdown });\n            node.send({ payload: \"Countdown Terminato\" }); // Invia messaggio di fine countdown\n        }\n    }, 1000);\n\n    flow.set('timer', timer); // Salva il riferimento al timer\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 300,
+        "wires": [
+            [
+                "2977585caca40c1b"
+            ]
+        ]
+    },
+    {
+        "id": "17cc1e1d0aaa8467",
+        "type": "function",
+        "z": "a07d466be93c703b",
+        "name": "Reset",
+        "func": "// Ottieni il riferimento al timer dal contesto di flusso\nlet timer = flow.get('timer') || null;\n\nif (timer) {\n    // Resetta il countdown a 10 secondi\n    flow.set('countdown', 10);\n    msg.payload = \"Timer resettato a 10 secondi\";\n} else {\n    msg.payload = \"Nessun timer attivo da resettare\";\n}\n\nreturn null;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "acca1059f02f3822",
+        "type": "mqtt in",
+        "z": "a07d466be93c703b",
+        "name": "",
+        "topic": "tpartenza",
+        "qos": "2",
+        "datatype": "auto-detect",
+        "broker": "3ee154e92170cd72",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 260,
+        "y": 360,
+        "wires": [
+            [
+                "6d30b1b9951af42d"
+            ]
+        ]
+    },
+    {
+        "id": "39e71a29c42422cc",
+        "type": "mqtt out",
+        "z": "a07d466be93c703b",
+        "name": "",
+        "topic": "arrivobus",
+        "qos": "",
+        "retain": "",
+        "respTopic": "",
+        "contentType": "",
+        "userProps": "",
+        "correl": "",
+        "expiry": "",
+        "broker": "3ee154e92170cd72",
+        "x": 620,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "1a5286ca17579701",
+        "type": "ui_chart",
+        "z": "a07d466be93c703b",
+        "name": "",
+        "group": "d0b0573b7944d9c4",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "label": "",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#55f59b",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 670,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d0b0573b7944d9c4",
+        "type": "ui_group",
+        "name": "Passeggeri",
+        "tab": "1e66fb1112febfc9",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "3ee154e92170cd72",
+        "type": "mqtt-broker",
+        "name": "",
+        "broker": "broker.emqx.io",
+        "port": "1883",
+        "clientid": "",
+        "autoConnect": true,
+        "usetls": false,
+        "protocolVersion": "4",
+        "keepalive": "60",
+        "cleansession": true,
+        "autoUnsubscribe": true,
+        "birthTopic": "",
+        "birthQos": "0",
+        "birthRetain": "false",
+        "birthPayload": "",
+        "birthMsg": {},
+        "closeTopic": "",
+        "closeQos": "0",
+        "closeRetain": "false",
+        "closePayload": "",
+        "closeMsg": {},
+        "willTopic": "",
+        "willQos": "0",
+        "willRetain": "false",
+        "willPayload": "",
+        "willMsg": {},
+        "userProps": "",
+        "sessionExpiry": ""
+    },
+    {
+        "id": "4684eb9c7015d3a2",
+        "type": "ui_group",
+        "name": "Ticket",
+        "tab": "1e66fb1112febfc9",
+        "order": 4,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "1440358bef112737",
+        "type": "ui_group",
+        "name": "Posizione SmartBus",
+        "tab": "1e66fb1112febfc9",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "9a47fea7d9d4e067",
+        "type": "telegram bot",
+        "botname": "smart_bus_bot",
+        "usernames": "@GameWame",
+        "chatids": "msg.chatId",
+        "baseapiurl": "",
+        "testenvironment": false,
+        "updatemode": "polling",
+        "addressfamily": "",
+        "pollinterval": "300",
+        "usesocks": false,
+        "sockshost": "",
+        "socksprotocol": "socks5",
+        "socksport": "6667",
+        "socksusername": "anonymous",
+        "sockspassword": "",
+        "bothost": "",
+        "botpath": "",
+        "localbotport": "8443",
+        "publicbotport": "8443",
+        "privatekey": "",
+        "certificate": "",
+        "useselfsignedcertificate": false,
+        "sslterminated": false,
+        "verboselogging": false
+    },
+    {
+        "id": "1e66fb1112febfc9",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    }
+]
