@@ -100,7 +100,7 @@ void setup() {
   // Connessione MQTT
   client.setServer(mqtt_broker, mqtt_port);
   client.subscribe(topic);
-  client.subscribe(topic_start);
+
   client.setCallback(callback);
   Serial.print("Subscribed to the topic: ");
   Serial.println(topic);
